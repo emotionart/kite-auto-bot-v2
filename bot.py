@@ -27,8 +27,9 @@ from executor import OrderManager
 import market_intel
 
 # ================================================================
-# LOGGING
+# LOGGING — logs/ folder must exist BEFORE FileHandler is created
 # ================================================================
+os.makedirs("logs", exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
@@ -265,6 +266,5 @@ def trading_loop():
 # START
 # ================================================================
 if __name__ == "__main__":
-    os.makedirs("logs", exist_ok=True)
     threading.Thread(target=telegram_listener, daemon=True).start()
     run_server()
