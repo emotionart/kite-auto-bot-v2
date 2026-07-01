@@ -24,6 +24,7 @@ import telegram_notify as tg
 from instruments import get_current_month_future
 from signals import get_signal
 from executor import OrderManager
+import market_intel
 
 # ================================================================
 # LOGGING
@@ -123,7 +124,7 @@ def telegram_listener():
     tg.send(
         "Kite Auto Bot online.\n\n"
         f"Login karne ke liye: {config.CALLBACK_URL.replace('/callback', '/login')}\n"
-        "Commands: /status /pnl"
+        "Commands: /status /pnl /report"
     )
     offset = None
     while True:
@@ -143,6 +144,21 @@ def telegram_listener():
                         tg.send("Bot abhi login nahi hua.")
                 elif text == "/login":
                     tg.send(f"Login link: {config.CALLBACK_URL.replace('/callback', '/login')}")
+                elif text == "/report":
+                    if not state["access_token"]:
+                        tg.send("Pehle /login karo, tabhi real data mil payega.")
+                    else:
+                        tg.send("Report ban rahi hai, thoda ruko...")
+                        try:
+                            oi_nifty = market_intel.get_oi_buildup(kite, "NIFTY")
+                            oi_bn = market_intel.get_oi_buildup(kite, "BANKNIFTY")
+                            movers = market_intel.get_top_movers(kite)
+                            fii_dii = market_intel.get_fii_dii_data()
+                            report = market_intel.format_report(oi_nifty, oi_bn, movers, fii_dii)
+                            tg.send(report)
+                        except Exception as e:
+                            log.error(f"[REPORT ERROR] {e}")
+                            tg.send(f"Report banane mein error: {e}")
         except Exception as e:
             log.error(f"[TG] Listener error: {e}")
         time.sleep(2)

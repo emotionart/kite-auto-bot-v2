@@ -22,9 +22,15 @@ CHAT_ID        = _require("CHAT_ID")
 # ================================================================
 # SERVER
 # ================================================================
-PORT         = int(os.environ.get("PORT", 8080))
-RAILWAY_URL  = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "")
-CALLBACK_URL = f"https://{RAILWAY_URL}/callback" if RAILWAY_URL else "http://localhost:8080/callback"
+PORT = int(os.environ.get("PORT", 8080))
+
+# Works on Railway, Render, or manual APP_URL — whichever is set
+_host = (
+    os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+    or os.environ.get("RENDER_EXTERNAL_URL", "").replace("https://", "").replace("http://", "")
+    or os.environ.get("APP_URL", "").replace("https://", "").replace("http://", "")
+)
+CALLBACK_URL = f"https://{_host}/callback" if _host else "http://localhost:8080/callback"
 
 # ================================================================
 # TRADING SETTINGS — apni risk appetite ke hisaab se badlo

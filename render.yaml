@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: kite-auto-bot
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: KITE_API_KEY
+        sync: false
+      - key: KITE_API_SECRET
+        sync: false
+      - key: TELEGRAM_TOKEN
+        sync: false
+      - key: CHAT_ID
+        sync: false
+      - key: MAX_DAILY_LOSS
+        value: "5000"
+      - key: MAX_TRADES_PER_DAY
+        value: "5"
+      - key: LOTS_PER_TRADE
+        value: "1"
